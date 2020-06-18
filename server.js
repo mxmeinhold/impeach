@@ -9,11 +9,11 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   const evalSchema = mongoose.Schema({ // eslint-disable-line new-cap
     name: String,
-    eboard: String,
+    eboard: [String],
     likes: String,
     dislikes: String,
     comments: String,
-    responses: Number
+    // responses: Number
   });
 
   Open = mongoose.model('Open', evalSchema);
@@ -52,13 +52,17 @@ const express = require('express');
 const app = express();
 
 // Configure body parsing
-app.use(require('body-parser'));
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({
+  extended: true,
+}));
+app.use(bodyParser.json());
 
 // Configure session handling
 app.use(require('express-session')({
   secret: process.env.EXPRESS_SESSION_SECRET,
   resave: true,
-  saveUninitialized: true
+  saveUninitialized: true,
 }));
 
 // Initialize Passport and restore authentication state from the session.
@@ -92,13 +96,36 @@ console.log(rev);
 app.set('view engine', 'pug');
 app.set('views', './views');
 
+// Static assets
+app.use(express.static('static'));
+
+// TODO migrate to some data file?
+const eboard = {
+  general: 'Eboard in General',
+  chair: 'Chairperson',
+  evals: 'Evals',
+  financial: 'Financial',
+  opcomm: 'OpComm',
+  history: 'History',
+  imps: 'Imps',
+  social: 'Social',
+  adhoc: 'Ad Hoc',
+};
+
 app.get('/', function(req, res) {
-  res.render('index', {gitUrl: gitUrl, gitRev: rev});
+  res.render('index', {gitUrl: gitUrl, gitRev: rev, eboard: eboard, error: false});
 });
 
-app.get('/submit', function(req, res) {
-  console.log(req.body);
-  res.render('submit', {gitUrl: gitUrl, gitRev: rev});
+app.post('/', function(req, res) {
+  const submission = new Open(req.body);
+  console.log(submission);
+  let error = false;
+  submission.save((err, submission) => {
+    error = err;
+  });
+  // error=true;
+  // res.render('submit', {gitUrl: gitUrl, gitRev: rev, error: error});
+  res.render('index', {gitUrl: gitUrl, gitRev: rev, eboard: eboard, error: error, submitted: !error});
 });
 
 app.listen(process.env.PORT);
