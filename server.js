@@ -13,7 +13,8 @@ db.once('open', function() {
     likes: String,
     dislikes: String,
     comments: String,
-    responses: Number});
+    responses: Number
+  });
 
   Open = mongoose.model('Open', evalSchema);
   Archive = mongoose.model('Archive', evalSchema);
@@ -29,7 +30,7 @@ passport.use(new Strategy({
   userInfoURL: 'https://sso.csh.rit.edu/auth/realms/csh/protocol/openid-connect/userinfo',
   clientID: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
-  callbackURL: process.env.HOST + '/login/callback',
+  callbackURL: 'http://' + process.env.HOST + '/login/callback',
 },
 function(accessToken, refreshToken, profile, cb) {
   return cb(null, profile);
@@ -50,11 +51,15 @@ passport.deserializeUser(function(obj, cb) {
 const express = require('express');
 const app = express();
 
+// Configure body parsing
+app.use(require('body-parser'));
+
 // Configure session handling
 app.use(require('express-session')({
   secret: process.env.EXPRESS_SESSION_SECRET,
   resave: true,
-  saveUninitialized: true}));
+  saveUninitialized: true
+}));
 
 // Initialize Passport and restore authentication state from the session.
 app.use(passport.initialize());
@@ -73,11 +78,27 @@ app.get('/login/callback',
 // Require login
 app.use(require('connect-ensure-login').ensureLoggedIn());
 
-
 // Pull git revision for display
 const git = require('git-rev');
 let rev = 'GitHub';
+let gitUrl = 'https://github.com/mxmeinhold/impeach';
 git.short(function(commit) {
+  gitUrl = gitUrl + '/tree/' + commit;
   rev = commit;
 });
-console.log(rev); // TODO display on frontend
+console.log(rev);
+
+// Set the templating engine
+app.set('view engine', 'pug');
+app.set('views', './views');
+
+app.get('/', function(req, res) {
+  res.render('index', {gitUrl: gitUrl, gitRev: rev});
+});
+
+app.get('/submit', function(req, res) {
+  console.log(req.body);
+  res.render('submit', {gitUrl: gitUrl, gitRev: rev});
+});
+
+app.listen(process.env.PORT);

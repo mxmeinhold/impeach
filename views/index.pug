@@ -1,0 +1,24 @@
+include head.pug
+preview
+    div(class="container")
+        if submitted
+            div(class="alert alert-primary mb-3" role="alert")
+                Eval Submited
+        form(action="/submit")
+            div(class="form-group")
+                label(for="nameInput") Name (optional)
+                input(type="text" class="form-control" id="name")
+            div(class="form-group")
+                label(for="positionInput") Position
+                input(type="text" class="form-control" id="position")
+            div(class="form-group")
+                label(for="likeInput") Likes?
+                input(type="textarea" class="form-control" id="likes")
+            div(class="form-group")
+                label(for="dislikesInput") Dislikes?
+                input(type="textarea" class="form-control" id="dislikes")
+            div(class="form-group")
+                label(for="commentsInput") Comments?
+                input(type="textarea" class="form-control" id="comments")
+            button(type="submit" class="btn btn-primary") Submit
+include foot.pug
