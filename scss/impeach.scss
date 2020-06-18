@@ -1,0 +1,21 @@
+$primary: #b0197e;
+
+form {
+    background-color: #fff;
+    padding: 2rem;
+}
+
+label{
+    color: $primary;
+}
+
+.from-control, [contenteditable].form-control, [type=email].form-control, [type=password].form-control, [type=tel].form-control, [type=text].form-control, input.form-control, input[type=email], input[type=number], input[type=password], input[type=text], textarea, textarea.form-control, select.form-control{
+    background-color: #eee;
+
+    padding: .375rem .75rem;
+    line-height: 1.5;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+
+}
