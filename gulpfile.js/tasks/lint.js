@@ -10,7 +10,8 @@ gulp.task('lint:js', () => {
         configFile: './.eslintrc.js',
       })
     )
-    .pipe(eslint.format());
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError());
 });
 
 gulp.task('lint:js:fix', () => {
@@ -23,13 +24,15 @@ gulp.task('lint:js:fix', () => {
       })
     )
     .pipe(eslint.format())
-    .pipe(gulp.dest((file) => file.base));
+    .pipe(gulp.dest((file) => file.base))
+    .pipe(eslint.failAfterError());
 });
 
 gulp.task('lint:pug', () => {
   return gulp.src('views/*.pug').pipe(
     pugLint({
       reporter: 'default',
+      failAfterError: true,
     })
   );
 });
