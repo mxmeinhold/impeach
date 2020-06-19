@@ -1,27 +1,25 @@
 include head.pug
 preview
   .container
-    if submitted
-      div(role='alert').alert.alert-primary.mb-3 Eval Submited
-    else if error
-      div(role='alert').alert.alert-danger.mb-3 Something went wrong, sorry
+    each alert in alerts
+      .alert.mb-3&attributes(alert.attributes)= alert.message
     form(method='POST' action='/')
-      .form-group
-        label(for='nameInput') Name (optional)
+      .card.form-group
+        label(for='name') Name (optional)
         input(type='text' id='name' name='name' autofocus).form-control
-      .form-group
-        label(for='positionInput') Position
-        select(id='position' name='eboard' size='8' required multiple).form-control
+      .card.form-group
+        label(for='position') Position
+        select(id='position' name='eboard' size='9' required multiple).form-control
           each val, key in eboard
             option(value=key)= val
-      .form-group
-        label(for='likeInput') Likes?
-        input(type='textarea' id='likes' name='likes').form-control
-      .form-group
-        label(for='dislikesInput') Dislikes?
-        input(type='textarea' id='dislikes' name='dislikes').form-control
-      .form-group
-        label(for='commentsInput') Comments?
-        input(type='textarea' id='comments' name='comments').form-control
+      .card.form-group
+        label(for='likes') Likes?
+        textarea(id='likes' name='likes').form-control
+      .card.form-group
+        label(for='dislikes') Dislikes?
+        textarea(id='dislikes' name='dislikes').form-control
+      .card.form-group
+        label(for='comments') Comments?
+        textarea(id='comments' name='comments').form-control
       button(type='submit').btn.btn-primary Submit
 include foot.pug
