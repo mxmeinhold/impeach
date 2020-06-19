@@ -5,7 +5,7 @@ const rename = require('gulp-rename');
 
 gulp.task('css:compile', () => {
   return gulp
-    .src('scss/**/*.scss')
+    .src('./src/scss/**/*.scss')
     .pipe(
       sass
         .sync({

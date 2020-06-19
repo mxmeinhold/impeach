@@ -13,4 +13,4 @@ COPY ./scss ./scss/
 
 RUN npx gulp css && rm -rf gulpfile.js scss && npm prune --production
 
-CMD ["node", "server.js"]
+CMD ["node", "src/server.js"]

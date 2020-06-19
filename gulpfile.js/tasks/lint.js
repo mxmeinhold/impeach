@@ -29,7 +29,7 @@ gulp.task('lint:js:fix', () => {
 });
 
 gulp.task('lint:pug', () => {
-  return gulp.src('views/*.pug').pipe(
+  return gulp.src('./src/views/**/*.pug').pipe(
     pugLint({
       reporter: 'default',
       failAfterError: true,

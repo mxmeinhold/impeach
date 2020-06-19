@@ -1,3 +1,6 @@
+// Set the process name for use in the stop script
+require('process').title = 'impeach';
+
 const eboard = require('./data/eboard.json');
 
 // Pull in environment variables
@@ -108,7 +111,7 @@ console.log(rev);
 
 // Set the templating engine
 app.set('view engine', 'pug');
-app.set('views', './views');
+app.set('views', './src/views');
 
 // Static assets
 app.use(express.static('static'));

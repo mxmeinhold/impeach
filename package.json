@@ -5,7 +5,12 @@
     "contributors": [
         "Max Meinhold <mxmeinhold@gmail.com>"
     ],
-    "scripts": {},
+    "scripts": {
+      "prestart": "npx gulp css",
+      "start": "node ./src/server.js",
+      "stop": "if pgrep -f 'impeach\\s*$'; then pkill -f 'impeach\\s*$'; fi",
+      "watch": "while true; do npm restart & inotifywait -qre modify ./src; done"
+    },
     "dependencies": {
         "connect-ensure-login": "^0.1.1",
         "dotenv": "^8.2.0",
