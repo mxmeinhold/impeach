@@ -1,0 +1,11 @@
+body(style='padding-top: 76px;')
+  nav.navbar.fixed-top.navbar-expand-lg.navbar-dark.bg-primary
+    .container
+      a(href='/').navbar-brand Eboard Evals
+      .align-left.mr-auto.mt-auto&attributes({style: {'font-weight': '450', 'font-size': 'large'}})
+        if user.eboard
+          a(href='/admin').nav-link.bg-primary.text-white.mt-2 Admin
+
+      .nav-item.navbar-user.text-white.mt-2
+        img(src=user.profileImage)
+        span= user.name
