@@ -18,8 +18,64 @@ db.once('open', function () {
     likes: String,
     dislikes: String,
     comments: String,
-    // responses: Number
   });
+  const parseEboard = (dir) => eboard[dir] || dir;
+  evalSchema.methods.pretty_print = function () {
+    return `Evaluation for ${this.eboard.map(parseEboard).join(', ')}:
+Likes: ${this.likes}
+Dislikes: ${this.dislikes}
+Comments: ${this.comments}
+${this.name ? `From: ${this.name}` : ''}`;
+  };
+  const content_block = (title, content) => {
+    return !content
+      ? []
+      : [
+          { type: 'divider' },
+          {
+            type: 'section',
+            text: {
+              type: 'mrkdwn',
+              text: `*${title}*`,
+            },
+          },
+          {
+            type: 'section',
+            text: {
+              type: 'mrkdwn',
+              text: content,
+            },
+          },
+        ];
+  };
+  evalSchema.methods.block_format = function () {
+    return {
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'plain_text',
+            text: "Hello :eboard:\nHere's a new Eboard Eval.",
+            emoji: true,
+          },
+        },
+      ],
+      attachments: [
+        {
+          color: '#b0197e',
+          blocks: [
+            ...content_block(
+              'Directorships',
+              this.eboard.map(parseEboard).join(', ')
+            ),
+            ...content_block('Likes', this.likes),
+            ...content_block('Dislikes', this.dislikes),
+            ...content_block('Comments', this.comments),
+          ],
+        },
+      ],
+    };
+  };
 
   Open = mongoose.model('Open', evalSchema);
   Archive = mongoose.model('Archive', evalSchema);
@@ -60,6 +116,7 @@ passport.deserializeUser(function (obj, cb) {
 // Create a new Express application.
 const express = require('express');
 const app = express();
+const axios = require('axios');
 
 // Configure body parsing
 const bodyParser = require('body-parser');
@@ -107,7 +164,6 @@ git.short(function (commit) {
   gitUrl = gitUrl + '/tree/' + commit;
   rev = commit;
 });
-console.log(rev);
 
 // Set the templating engine
 app.set('view engine', 'pug');
@@ -185,6 +241,15 @@ app.post('/', function (req, res) {
             role: 'alert',
           },
         });
+        process.env.SLACK_URI &&
+          axios
+            .post(process.env.SLACK_URI, {
+              text: submission.pretty_print(),
+              ...submission.block_format(),
+            })
+            .catch(function (error) {
+              console.log(error); // TODO
+            });
       }
       res.render('index', {
         gitUrl: gitUrl,
