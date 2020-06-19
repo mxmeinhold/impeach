@@ -12,15 +12,16 @@ label {
 }
 
 .from-control,
+input.formcontrol,
+[type=text].formcontrol,
+input[type=text],
 input[type=text].formcontrol,
 textarea.form-control,
 select.form-control{
     background-color: #eee;
-
     padding: .375rem .75rem;
     line-height: 1.5;
     border: 1px solid #ced4da;
     border-radius: .25rem;
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-
 }

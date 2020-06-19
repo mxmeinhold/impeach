@@ -171,7 +171,7 @@ app.post('/', function (req, res) {
         alerts.push({
           message: 'Eval Submitted',
           attributes: {
-            class: 'alert-danger',
+            class: 'alert-primary',
             role: 'alert',
           },
         });
