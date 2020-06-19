@@ -1,3 +1,5 @@
+const eboard = require('./data/eboard.json');
+
 // Pull in environment variables
 require('dotenv').config();
 
@@ -111,19 +113,6 @@ app.set('views', './views');
 // Static assets
 app.use(express.static('static'));
 
-// TODO migrate to some data file?
-const eboard = {
-  general: 'Eboard in General',
-  chair: 'Chairperson',
-  evals: 'Evals',
-  financial: 'Financial',
-  opcomm: 'OpComm',
-  history: 'History',
-  imps: 'Imps',
-  social: 'Social',
-  adhoc: 'Ad Hoc',
-};
-
 app.get('/', function (req, res) {
   res.render('index', {
     gitUrl: gitUrl,
@@ -183,6 +172,7 @@ app.post('/', function (req, res) {
     gitRev: rev,
     eboard: eboard,
     alerts: alerts,
+    user: getUser(req),
   });
 });
 
