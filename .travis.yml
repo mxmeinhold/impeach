@@ -1,8 +1,8 @@
 language: node_js
 before_install:
-    - nvm install lts/* --reinstall-packages-from=node
-    - npm i -g npm@6.8.0
+    - "nvm install lts/* --reinstall-packages-from=node"
+    - "npm i -g npm@6.8.0"
 script:
-    - npm run lint
+    - "npx gulp lint"
 notifications:
     email: false
