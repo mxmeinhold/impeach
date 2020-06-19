@@ -149,17 +149,25 @@ const body2openEval = (body) => {
 };
 
 app.post('/', function (req, res) {
-  const alerts = [];
   const submission = body2openEval(req.body);
   if (!submission) {
-    alerts.push({
-      message: 'Empty submission, eval not recorded',
-      attributes: {
-        class: 'alert-warning',
-        role: 'alert',
-      },
+    res.render('index', {
+      gitUrl: gitUrl,
+      gitRev: rev,
+      eboard: eboard,
+      alerts: [
+        {
+          message: 'Empty submission, eval not recorded',
+          attributes: {
+            class: 'alert-warning',
+            role: 'alert',
+          },
+        },
+      ],
+      user: getUser(req),
     });
   } else {
+    const alerts = [];
     submission.save((err, submission) => {
       if (err) {
         alerts.push({
@@ -178,15 +186,15 @@ app.post('/', function (req, res) {
           },
         });
       }
+      res.render('index', {
+        gitUrl: gitUrl,
+        gitRev: rev,
+        eboard: eboard,
+        alerts: alerts,
+        user: getUser(req),
+      });
     });
   }
-  res.render('index', {
-    gitUrl: gitUrl,
-    gitRev: rev,
-    eboard: eboard,
-    alerts: alerts,
-    user: getUser(req),
-  });
 });
 
 app.listen(process.env.PORT);
