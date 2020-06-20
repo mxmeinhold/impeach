@@ -36,5 +36,3 @@ gulp.task('lint:pug', () => {
     })
   );
 });
-
-gulp.task('lint', gulp.parallel('lint:pug', 'lint:js'));

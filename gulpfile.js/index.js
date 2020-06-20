@@ -5,4 +5,7 @@ requireDir('./tasks', {
   recurse: true,
 });
 
-gulp.task('default', gulp.parallel('css'));
+gulp.task('gen-static', gulp.parallel(['favicon', 'css']));
+gulp.task('lint', gulp.parallel(['lint:js', 'lint:pug']));
+
+gulp.task('default', gulp.parallel('gen-static'));

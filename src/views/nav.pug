@@ -1,14 +1,13 @@
-body(style='padding-top: 76px;')
-  nav.navbar.fixed-top.navbar-expand-lg.navbar-dark.bg-primary
-    .container
-      a(href='/').navbar-brand Eboard Evals
-      .nav-div.align-left.mt-auto
-        if user.eboard
-          a(href='/current-evals').nav-link.bg-primary.text-white Current Evals
-      .nav-div.align-left.mr-auto.mt-auto
-        if user.eboard
-          a(href='/archive').nav-link.bg-primary.text-white Archive
+nav.navbar.fixed-top.navbar-expand-lg.navbar-dark.bg-primary
+  .container
+    a(href='/').navbar-brand Eboard Evals
+    .nav-div.align-left.mt-auto
+      if user.eboard
+        a(href='/current-evals').nav-link.bg-primary.text-white Current Evals
+    .nav-div.align-left.mr-auto.mt-auto
+      if user.eboard
+        a(href='/archive').nav-link.bg-primary.text-white Archive
 
-      .nav-item.navbar-user.text-white.mt-2
-        img(src=user.profileImage)
-        span= user.name
+    .nav-item.navbar-user.text-white.mt-2
+      img(src=user.profileImage)
+      span= user.name

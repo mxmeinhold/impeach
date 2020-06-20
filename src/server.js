@@ -80,6 +80,9 @@ app.get(
   }
 );
 
+// Static assets
+app.use(express.static('static'));
+
 // Require login
 app.use(require('connect-ensure-login').ensureLoggedIn());
 
@@ -95,9 +98,6 @@ git.short(function (commit) {
 // Set the templating engine
 app.set('view engine', 'pug');
 app.set('views', './src/views');
-
-// Static assets
-app.use(express.static('static'));
 
 function getUser(req) {
   const { preferred_username, given_name, groups } = req.user._json;
