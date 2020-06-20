@@ -1,113 +1,26 @@
-var gulp = require('gulp');
-var realFavicon = require('gulp-real-favicon');
-var fs = require('fs');
+const color = require('color');
+const gulp = require('gulp');
+const recolor_svg = require('gulp-recolor-svg');
+const rename = require('gulp-rename');
 
-// File where the favicon markups are stored
-var FAVICON_DATA_FILE = 'faviconData.json';
+const csh_purple = '#b0197e';
+const icon_dir = './static/icon/';
 
-// Generate the icons. This task takes a few seconds to complete.
-// You should run it at least once to create the icons. Then,
-// you should run it whenever RealFaviconGenerator updates its
-// package (see the check-for-favicon-update task below).
-gulp.task('generate-favicon', function (done) {
-  realFavicon.generateFavicon(
-    {
-      masterPicture: './assets/favicon.png',
-      dest: './static/icon/',
-      iconsPath: '/icon/',
-      design: {
-        ios: {
-          pictureAspect: 'backgroundAndMargin',
-          backgroundColor: '#b0197e',
-          margin: '14%',
-          assets: {
-            ios6AndPriorIcons: false,
-            ios7AndLaterIcons: false,
-            precomposedIcons: false,
-            declareOnlyDefaultIcon: true,
-          },
-        },
-        desktopBrowser: {
-          design: 'background',
-          backgroundColor: '#df209f',
-          backgroundRadius: 0.45,
-          imageScale: 0.8,
-        },
-        windows: {
-          pictureAspect: 'noChange',
-          backgroundColor: '#b0197e',
-          onConflict: 'override',
-          assets: {
-            windows80Ie10Tile: false,
-            windows10Ie11EdgeTiles: {
-              small: false,
-              medium: true,
-              big: false,
-              rectangle: false,
-            },
-          },
-        },
-        androidChrome: {
-          pictureAspect: 'noChange',
-          themeColor: '#b0197e',
-          manifest: {
-            startUrl: 'https://impeach.csh.rit.edu',
-            display: 'browser',
-            orientation: 'notSet',
-            onConflict: 'override',
-            declared: true,
-          },
-          assets: {
-            legacyIcon: false,
-            lowResolutionIcons: false,
-          },
-        },
-        safariPinnedTab: {
-          pictureAspect: 'blackAndWhite',
-          threshold: 50,
-          themeColor: '#b0197e',
-        },
-      },
-      settings: {
-        scalingAlgorithm: 'Mitchell',
-        errorOnImageTooSmall: false,
-        readmeFile: false,
-        htmlCodeFile: false,
-        usePathAsIs: false,
-      },
-      markupFile: FAVICON_DATA_FILE,
-    },
-    function () {
-      done();
-    }
-  );
+gulp.task('favicon:assets', function () {
+  return gulp.src('assets/*.svg').pipe(gulp.dest(icon_dir));
 });
 
-// Inject the favicon markups in your HTML pages. You should run
-// this task whenever you modify a page. You can keep this task
-// as is or refactor your existing HTML pipeline.
-gulp.task('inject-favicon-markups', function () {
+gulp.task('favicon:white', function () {
   return gulp
-    .src(['./src/views/favicon.html'])
+    .src('assets/favicon-transparent.svg')
     .pipe(
-      realFavicon.injectFaviconMarkups(
-        JSON.parse(fs.readFileSync(FAVICON_DATA_FILE)).favicon.html_code
+      recolor_svg.Replace(
+        [recolor_svg.ColorMatcher(color('black'))],
+        [color('white')]
       )
     )
-    .pipe(gulp.dest('./src/views'));
+    .pipe(rename('mstile.svg'))
+    .pipe(gulp.dest(icon_dir));
 });
 
-// Check for updates on RealFaviconGenerator (think: Apple has just
-// released a new Touch icon along with the latest version of iOS).
-// Run this task from time to time. Ideally, make it part of your
-// continuous integration system.
-gulp.task('check-for-favicon-update', function (done) {
-  var currentVersion = JSON.parse(fs.readFileSync(FAVICON_DATA_FILE)).version;
-  realFavicon.checkForUpdates(currentVersion, function (err) {
-    if (err) {
-      throw err;
-    }
-  });
-});
-
-gulp.task('favicon', gulp.series('generate-favicon', 'inject-favicon-markups'));
+gulp.task('favicon', gulp.parallel('favicon:assets', 'favicon:white'));
