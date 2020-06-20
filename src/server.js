@@ -102,7 +102,7 @@ app.use(express.static('static'));
 function getUser(req) {
   const { preferred_username, given_name, groups } = req.user._json;
   return {
-    eboard: groups.includes('rtp'), // TODO
+    eboard: groups.includes('rtp') || groups.includes('eboard'), // TODO
     profileImage: `https://profiles.csh.rit.edu/image/${preferred_username}`,
     name: `${given_name} (${preferred_username})`,
   };
