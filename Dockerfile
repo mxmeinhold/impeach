@@ -1,9 +1,9 @@
 FROM alpine:3.12
 LABEL maintainer="Max Meinhold <mxmeinhold@gmail.com>"
-ENV NODE_VERSION 14.3.0
-EXPOSE 8080
 
-USER 1001
+ENV NODE_VERSION 14.3.0
+
+EXPOSE 8080
 
 RUN apk add 'nodejs-current=14.3.0-r0' 'nodejs-npm=12.17.0-r0'
 
@@ -19,5 +19,6 @@ COPY ./src ./src/
 
 RUN npx gulp css && rm -rf gulpfile.js && npm prune --production
 
+USER 1001
 
 CMD ["node", "src/server.js"]
