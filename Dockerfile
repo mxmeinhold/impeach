@@ -14,10 +14,13 @@ COPY package*.json ./
 
 RUN npm install
 
+COPY ./assets ./assets/
 COPY ./gulpfile.js ./gulpfile.js/
-COPY ./src ./src/
+COPY ./src/scss ./src/scss
 
-RUN npx gulp css && rm -rf gulpfile.js && npm prune --production
+RUN npx gulp gen-static && rm -rf gulpfile.js && npm prune --production
+
+COPY ./src/ ./src/
 
 USER 1001
 
