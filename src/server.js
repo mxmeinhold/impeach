@@ -118,6 +118,24 @@ app.get('/', function (req, res) {
   });
 });
 
+app.get('/current-evals', function (req, res, next) {
+  const user = getUser(req);
+  if (!user.eboard) {
+    res.sendStatus(403);
+  } else {
+    Open.find(function (err, subs) {
+      res.render('current-evals', {
+        gitUrl: gitUrl,
+        gitRev: rev,
+        eboard: eboard,
+        alerts: [],
+        user: getUser(req),
+        submissions: subs,
+      });
+    });
+  }
+});
+
 const body2openEval = (body) => {
   const submission = new Open({
     name: (body.name && body.name.trim()) || '',
@@ -188,5 +206,61 @@ app.post('/', function (req, res) {
     });
   }
 });
+
+app.get('/archive', function (req, res, next) {
+  const user = getUser(req);
+  if (!user.eboard) {
+    res.sendStatus(403);
+  } else {
+    Archive.find(function (err, subs) {
+      if (err) {
+        next(err);
+      }
+      res.render('archive', {
+        gitUrl: gitUrl,
+        gitRev: rev,
+        eboard: eboard,
+        alerts: [],
+        user: getUser(req),
+        submissions: subs,
+      });
+    });
+  }
+});
+
+app.post('/api/delet/:id', function (req, res, next) {
+  const id = req.params.id;
+  Open.findById(id, (err, open) => {
+    if (err) {
+      res.status(500).send('Error');
+    } else {
+      new Archive({
+        _id: open._id,
+        name: open.name,
+        likes: open.likes,
+        dislikes: open.dislikes,
+        comments: open.comments,
+        eboard: open.eboard,
+      }).save((err, archive) => {
+        if (err) {
+          res.status(500).send('Error');
+        } else {
+          Open.deleteOne({ _id: id }, (err, deleted) => {
+            if (err) {
+              Archive.deleteOne({ _id: archive._id }, (err, archive_delete) => {
+                /* At this point we don't care anymore*/
+              });
+              res.status(500).send('Error');
+            } else {
+              res.status(200).json({ deleted: true });
+            }
+          });
+        }
+      });
+    }
+  });
+});
+
+// TODO make a real 404 page, and 403
 
 app.listen(process.env.PORT);

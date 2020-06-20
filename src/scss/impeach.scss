@@ -3,15 +3,19 @@ $primary: #b0197e;
 .card {
     background-color: #fff;
     padding: 2rem;
+    margin-bottom: 1rem
+}
+
+label, .card-title {
+    color: $primary;
 }
 
 label {
-    color: $primary;
     font-size: 1rem;
     font-weight: bold;
 }
 
-.from-control,
+.form-control,
 input.formcontrol,
 [type=text].formcontrol,
 input[type=text],
@@ -24,4 +28,9 @@ select.form-control{
     border: 1px solid #ced4da;
     border-radius: .25rem;
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.nav-div {
+    font-weight: 450;
+    font-size: large;
 }

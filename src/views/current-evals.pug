@@ -1,0 +1,35 @@
+include head.pug
+include nav.pug
+preview
+  .container
+    each alert in alerts
+      .alert.mb-3&attributes(alert.attributes)= alert.message
+    each open in submissions
+      .card&attributes({id: open._id})
+        .card-body
+          if open.eboard
+            h4.card-title= open.eboard.map((dir) => eboard[dir] || dir).join(', ')
+          if open.likes
+            h5.card-subtitle.mt-2 Likes
+            p.card-text= open.likes
+          if open.dislikes
+            h5.card-subtitle.mt-2 Dislikes
+            p.card-text= open.dislikes
+          if open.comments
+            h5.card-subtitle.mt-2 Comments
+            p.card-text= open.comments
+          if open.name
+            h5.card-subitle.mt-2 From:
+            p.card-text= open.name
+          button(type='button' onclick=`delet("${open._id}")`).btn.btn-primary Archive
+script(type='text/javascript')
+  | function delet(id) {
+  |   fetch(`/api/delet/${id}`, {
+  |     method: 'POST',
+  |     cache: 'no-cache'
+  |   })
+  |   .then(response => response.json())
+  |   .then(data => document.getElementById(id).remove())
+  |   .catch(error => console.error(error))
+  | }
+include foot.pug
