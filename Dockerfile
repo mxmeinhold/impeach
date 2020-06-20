@@ -21,6 +21,7 @@ COPY ./src/scss ./src/scss
 RUN npx gulp gen-static && rm -rf gulpfile.js && npm prune --production
 
 COPY ./src/ ./src/
+COPY ./.git ./.git/
 
 USER 1001
 

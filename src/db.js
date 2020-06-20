@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const { message_header, content_block } = require('./data/slack-formats.js');
 const eboard = require('./data/eboard.json');
 
+const model_prefix = process.env.IS_PROD === 'production' ? '' : 'dev-';
+
 // Define and connect to database
 mongoose.connect(process.env.DB_URI);
 
@@ -44,8 +46,8 @@ ${this.name ? `From: ${this.name}` : ''}`;
     };
   };
 
-  Open = mongoose.model('Open', evalSchema);
-  Archive = mongoose.model('Archive', evalSchema);
+  Open = mongoose.model(`${model_prefix}Open`, evalSchema);
+  Archive = mongoose.model(`${model_prefix}Archive`, evalSchema);
 });
 
 module.exports = db;

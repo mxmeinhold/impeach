@@ -1,6 +1,8 @@
 // Set the process name for use in the stop script
 require('process').title = 'impeach';
 
+const is_prod = process.env.NODE_ENV === 'production';
+
 const eboard = require('./data/eboard.json');
 
 // Pull in environment variables
@@ -90,10 +92,12 @@ app.use(require('connect-ensure-login').ensureLoggedIn());
 const git = require('git-rev');
 let rev = 'GitHub';
 let gitUrl = 'https://github.com/mxmeinhold/impeach';
-git.short(function (commit) {
-  gitUrl = gitUrl + '/tree/' + commit;
-  rev = commit;
-});
+if (is_prod) {
+  git.short(function (commit) {
+    gitUrl = gitUrl + '/tree/' + commit;
+    rev = commit;
+  });
+}
 
 // Set the templating engine
 app.set('view engine', 'pug');
@@ -102,7 +106,7 @@ app.set('views', './src/views');
 function getUser(req) {
   const { preferred_username, given_name, groups } = req.user._json;
   return {
-    eboard: groups.includes('rtp') || groups.includes('eboard'), // TODO
+    eboard: !is_prod || groups.includes('eboard'), // Always show in dev mode
     profileImage: `https://profiles.csh.rit.edu/image/${preferred_username}`,
     name: `${given_name} (${preferred_username})`,
   };
