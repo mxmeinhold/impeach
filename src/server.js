@@ -47,6 +47,16 @@ const express = require('express');
 const app = express();
 const axios = require('axios');
 
+let Sentry;
+// Configure sentry
+if (is_prod && process.env.SENTRY_DSN) {
+  Sentry = require('@sentry/node');
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+  });
+  app.use(Sentry.Handlers.requestHandler());
+}
+
 // Configure body parsing
 const bodyParser = require('body-parser');
 app.use(
@@ -263,6 +273,10 @@ app.post('/api/delet/:id', function (req, res, next) {
     }
   });
 });
+
+if (Sentry) {
+  app.use(Sentry.Handlers.errorHandler());
+}
 
 // TODO make a real 404 page, and 403
 
