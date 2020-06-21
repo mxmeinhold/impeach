@@ -92,12 +92,10 @@ app.use(require('connect-ensure-login').ensureLoggedIn());
 const git = require('git-rev');
 let rev = 'GitHub';
 let gitUrl = 'https://github.com/mxmeinhold/impeach';
-if (is_prod) {
-  git.short(function (commit) {
-    gitUrl = gitUrl + '/tree/' + commit;
-    rev = commit;
-  });
-}
+git.short(function (commit) {
+  gitUrl = gitUrl + '/tree/' + commit;
+  rev = commit;
+});
 
 // Set the templating engine
 app.set('view engine', 'pug');
@@ -106,9 +104,10 @@ app.set('views', './src/views');
 function getUser(req) {
   const { preferred_username, given_name, groups } = req.user._json;
   return {
-    eboard: !is_prod || groups.includes('eboard'), // Always show in dev mode
+    eboard: groups.includes('eboard'),
     profileImage: `https://profiles.csh.rit.edu/image/${preferred_username}`,
     name: `${given_name} (${preferred_username})`,
+    is_prod: is_prod,
   };
 }
 

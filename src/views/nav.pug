@@ -1,11 +1,13 @@
 nav.navbar.fixed-top.navbar-expand-lg.navbar-dark.bg-primary
   .container
-    a(href='/').navbar-brand Eboard Evals
-    .nav-div.align-left.mt-auto
-      if user.eboard
+    a(href='/').navbar-brand
+      | Eboard Evals
+      if !user.is_prod
+      |  DEV
+    if user.eboard || !user.is_prod
+      .nav-div.align-left.mt-auto
         a(href='/current-evals').nav-link.bg-primary.text-white Current Evals
-    .nav-div.align-left.mr-auto.mt-auto
-      if user.eboard
+      .nav-div.align-left.mr-auto.mt-auto
         a(href='/archive').nav-link.bg-primary.text-white Archive
 
     .nav-item.navbar-user.text-white.mt-2
