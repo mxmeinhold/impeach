@@ -1,5 +1,6 @@
-const eboard = require('./data/eboard.json');
+const axios = require('axios');
 const db = require('./db.js');
+const eboard = require('./data/eboard.json');
 const { Err } = require('./error.js');
 const { getUser, rev, gitUrl, is_prod } = require('./util.js');
 
@@ -10,6 +11,7 @@ const body2openEval = (body) => {
     likes: (body.likes && body.likes.trim()) || '',
     dislikes: (body.dislikes && body.dislikes.trim()) || '',
     comments: (body.comments && body.comments.trim()) || '',
+    date: new Date(),
   });
   if (submission.likes || submission.dislikes || submission.comments) {
     return submission;
@@ -139,6 +141,7 @@ const delet = (req, res, next) => {
         dislikes: open.dislikes,
         comments: open.comments,
         eboard: open.eboard,
+        date: open.date,
       }).save((err, archive) => {
         if (err) {
           next(err);

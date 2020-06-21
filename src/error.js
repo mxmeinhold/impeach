@@ -1,5 +1,4 @@
 const { getUser, rev, gitUrl, is_prod } = require('./util.js');
-console.log(is_prod);
 class Err extends Error {
   constructor(message, statusCode) {
     super(message);

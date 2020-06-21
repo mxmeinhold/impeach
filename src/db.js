@@ -1,6 +1,6 @@
+const eboard = require('./data/eboard.json');
 const mongoose = require('mongoose');
 const { message_header, content_block } = require('./data/slack-formats.js');
-const eboard = require('./data/eboard.json');
 
 const model_prefix = process.env.IS_PROD === 'production' ? '' : 'dev-';
 
@@ -16,16 +16,18 @@ db.once('open', () => {
     likes: String,
     dislikes: String,
     comments: String,
+    date: Date,
   });
   const parseEboard = (dir) => eboard[dir] || dir;
-  evalSchema.methods.pretty_print = () => {
+  evalSchema.methods.pretty_print = function () {
     return `Evaluation for ${this.eboard.map(parseEboard).join(', ')}:
 Likes: ${this.likes}
 Dislikes: ${this.dislikes}
 Comments: ${this.comments}
-${this.name ? `From: ${this.name}` : ''}`;
+${this.name ? `From: ${this.name}` : ''}
+${this.date ? this.date : ''}`;
   };
-  evalSchema.methods.block_format = () => {
+  evalSchema.methods.block_format = function () {
     return {
       blocks: [message_header],
       attachments: [
@@ -40,6 +42,7 @@ ${this.name ? `From: ${this.name}` : ''}`;
             ...content_block('Dislikes', this.dislikes),
             ...content_block('Comments', this.comments),
             ...content_block('From:', this.name),
+            ...content_block('Timestamp:', this.date),
           ],
         },
       ],

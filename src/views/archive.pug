@@ -7,7 +7,9 @@ preview
       .card&attributes({id: open._id})
         .card-body
           if open.eboard
-            h4.card-title= open.eboard.map((dir) => eboard[dir] || dir).join(', ')
+            h4.card-title.mb-0= open.eboard.map((dir) => eboard[dir] || dir).join(', ')
+          if open.date
+            p.cart-text.text-muted= open.date
           if open.likes
             h5.card-subtitle.mt-2 Likes
             p.card-text= open.likes

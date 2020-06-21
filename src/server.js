@@ -44,7 +44,6 @@ passport.deserializeUser((obj, cb) => {
 // Create a new Express application.
 const express = require('express');
 const app = express();
-const axios = require('axios');
 
 let Sentry;
 // Configure sentry
