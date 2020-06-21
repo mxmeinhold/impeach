@@ -1,10 +1,13 @@
 // Set the process name for use in the stop script
 require('process').title = 'impeach';
+const { is_prod } = require('./util.js');
 
-// Pull in environment variables
-require('dotenv').config();
-
-const is_prod = process.env.NODE_ENV === 'production';
+const shut_down = (err) => {
+  console.log(err.name, err.message);
+  console.log('UNHANDLED REJECTION! Shutting down...');
+  process.exit(1);
+};
+process.on('unhandledException', shut_down);
 
 // Configure the OpenID Connect strategy for use by Passport.
 const passport = require('passport');
@@ -100,6 +103,7 @@ app.set('views', './src/views');
 
 // Routes
 const routes = require('./routes.js');
+const { err_404, handle_error } = require('./error.js');
 
 app.get('/', routes.root_get);
 app.post('/', routes.root_submit);
@@ -109,11 +113,15 @@ app.get('/archive', routes.archive_get);
 
 app.post('/api/delet/:id', routes.delet);
 
+app.use(err_404);
+
 // Error handling
 if (Sentry) {
   app.use(Sentry.Handlers.errorHandler());
 }
 
-// TODO make a real 404 page, and 403
+app.use(handle_error);
 
 app.listen(process.env.PORT);
+
+process.on('unhandledRejection', shut_down);

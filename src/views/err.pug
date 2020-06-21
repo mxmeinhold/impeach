@@ -1,0 +1,10 @@
+include head.pug
+preview
+  .container
+    .card.text-white.bg-warning.mb-3
+      h4.card-header= `Error: ${status}`
+      .card-body
+        h5.card-title.text-white= message
+        if status === 404
+          p.card-text= `Looks like ${url} doesn't exist`
+include foot.pug

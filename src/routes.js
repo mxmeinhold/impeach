@@ -1,15 +1,7 @@
 const eboard = require('./data/eboard.json');
 const db = require('./db.js');
-const is_prod = process.env.NODE_ENV === 'production';
-
-// Pull git revision for display
-const git = require('git-rev');
-let rev = 'GitHub';
-let gitUrl = 'https://github.com/mxmeinhold/impeach';
-git.short((commit) => {
-  gitUrl = gitUrl + '/tree/' + commit;
-  rev = commit;
-});
+const { Err } = require('./error.js');
+const { getUser, rev, gitUrl, is_prod } = require('./util.js');
 
 const body2openEval = (body) => {
   const submission = new Open({
@@ -22,16 +14,6 @@ const body2openEval = (body) => {
   if (submission.likes || submission.dislikes || submission.comments) {
     return submission;
   }
-};
-
-const getUser = (req) => {
-  const { preferred_username, given_name, groups } = req.user._json;
-  return {
-    eboard: groups.includes('eboard'),
-    profileImage: `https://profiles.csh.rit.edu/image/${preferred_username}`,
-    name: `${given_name} (${preferred_username})`,
-    is_prod: is_prod,
-  };
 };
 
 const root_get = (req, res) => {
@@ -47,9 +29,12 @@ const root_get = (req, res) => {
 const current_evals_get = (req, res, next) => {
   const user = getUser(req);
   if (!user.eboard && is_prod) {
-    res.sendStatus(403);
+    next(new Err('Permission denied', 403));
   } else {
     Open.find((err, subs) => {
+      if (err) {
+        next(err);
+      }
       res.render('current-evals', {
         gitUrl: gitUrl,
         gitRev: rev,
@@ -105,7 +90,8 @@ const root_submit = (req, res) => {
               ...submission.block_format(),
             })
             .catch((error) => {
-              console.log(error); // TODO
+              console.log('ERROR: failed to send to slack');
+              console.log(error);
             });
       }
       res.render('index', {
@@ -121,8 +107,8 @@ const root_submit = (req, res) => {
 
 const archive_get = (req, res, next) => {
   const user = getUser(req);
-  if (!user.eboard) {
-    res.sendStatus(403);
+  if (!user.eboard && is_prod) {
+    next(new Err('Permission denied', 403));
   } else {
     Archive.find((err, subs) => {
       if (err) {
@@ -144,7 +130,7 @@ const delet = (req, res, next) => {
   const id = req.params.id;
   Open.findById(id, (err, open) => {
     if (err) {
-      res.status(500).send('Error');
+      next(err);
     } else {
       new Archive({
         _id: open._id,
@@ -155,14 +141,14 @@ const delet = (req, res, next) => {
         eboard: open.eboard,
       }).save((err, archive) => {
         if (err) {
-          res.status(500).send('Error');
+          next(err);
         } else {
           Open.deleteOne({ _id: id }, (err, deleted) => {
             if (err) {
               Archive.deleteOne({ _id: archive._id }, (err, archive_delete) => {
                 /* At this point we don't care anymore*/
               });
-              res.status(500).send('Error');
+              next(err);
             } else {
               res.status(200).json({ deleted: true });
             }

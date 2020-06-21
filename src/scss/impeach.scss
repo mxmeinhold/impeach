@@ -1,9 +1,11 @@
 $primary: #b0197e;
 
 .card {
+    margin-bottom: 1rem;
+}
+.card.form-group {
     background-color: #fff;
     padding: 2rem;
-    margin-bottom: 1rem
 }
 
 label, .card-title {
