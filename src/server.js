@@ -23,18 +23,18 @@ passport.use(
       clientSecret: process.env.CLIENT_SECRET,
       callbackURL: 'http://' + process.env.HOST + '/login/callback',
     },
-    function (accessToken, refreshToken, profile, cb) {
+    (accessToken, refreshToken, profile, cb) => {
       return cb(null, profile);
     }
   )
 );
 
 // Configure Passport authenticated session persistence.
-passport.serializeUser(function (user, cb) {
+passport.serializeUser((user, cb) => {
   cb(null, user);
 });
 
-passport.deserializeUser(function (obj, cb) {
+passport.deserializeUser((obj, cb) => {
   cb(null, obj);
 });
 
@@ -83,7 +83,7 @@ app.get(
   passport.authenticate('openidconnect', {
     failureRedirect: '/login',
   }),
-  function (req, res) {
+  (req, res) => {
     res.redirect(req.session.returnTo);
   }
 );

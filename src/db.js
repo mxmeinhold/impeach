@@ -9,7 +9,7 @@ mongoose.connect(process.env.DB_URI);
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function () {
+db.once('open', () => {
   const evalSchema = mongoose.Schema({
     name: String,
     eboard: [String],
@@ -18,14 +18,14 @@ db.once('open', function () {
     comments: String,
   });
   const parseEboard = (dir) => eboard[dir] || dir;
-  evalSchema.methods.pretty_print = function () {
+  evalSchema.methods.pretty_print = () => {
     return `Evaluation for ${this.eboard.map(parseEboard).join(', ')}:
 Likes: ${this.likes}
 Dislikes: ${this.dislikes}
 Comments: ${this.comments}
 ${this.name ? `From: ${this.name}` : ''}`;
   };
-  evalSchema.methods.block_format = function () {
+  evalSchema.methods.block_format = () => {
     return {
       blocks: [message_header],
       attachments: [

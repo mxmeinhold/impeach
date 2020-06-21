@@ -6,12 +6,12 @@ const is_prod = process.env.NODE_ENV === 'production';
 const git = require('git-rev');
 let rev = 'GitHub';
 let gitUrl = 'https://github.com/mxmeinhold/impeach';
-git.short(function (commit) {
+git.short((commit) => {
   gitUrl = gitUrl + '/tree/' + commit;
   rev = commit;
 });
 
-function body2openEval(body) {
+const body2openEval = (body) => {
   const submission = new Open({
     name: (body.name && body.name.trim()) || '',
     eboard: body.eboard,
@@ -22,9 +22,9 @@ function body2openEval(body) {
   if (submission.likes || submission.dislikes || submission.comments) {
     return submission;
   }
-}
+};
 
-function getUser(req) {
+const getUser = (req) => {
   const { preferred_username, given_name, groups } = req.user._json;
   return {
     eboard: groups.includes('eboard'),
@@ -32,9 +32,9 @@ function getUser(req) {
     name: `${given_name} (${preferred_username})`,
     is_prod: is_prod,
   };
-}
+};
 
-function root_get(req, res) {
+const root_get = (req, res) => {
   res.render('index', {
     gitUrl: gitUrl,
     gitRev: rev,
@@ -42,14 +42,14 @@ function root_get(req, res) {
     alerts: [],
     user: getUser(req),
   });
-}
+};
 
-function current_evals_get(req, res, next) {
+const current_evals_get = (req, res, next) => {
   const user = getUser(req);
   if (!user.eboard && is_prod) {
     res.sendStatus(403);
   } else {
-    Open.find(function (err, subs) {
+    Open.find((err, subs) => {
       res.render('current-evals', {
         gitUrl: gitUrl,
         gitRev: rev,
@@ -60,8 +60,8 @@ function current_evals_get(req, res, next) {
       });
     });
   }
-}
-function root_submit(req, res) {
+};
+const root_submit = (req, res) => {
   const submission = body2openEval(req.body);
   if (!submission) {
     res.render('index', {
@@ -104,7 +104,7 @@ function root_submit(req, res) {
               text: submission.pretty_print(),
               ...submission.block_format(),
             })
-            .catch(function (error) {
+            .catch((error) => {
               console.log(error); // TODO
             });
       }
@@ -117,14 +117,14 @@ function root_submit(req, res) {
       });
     });
   }
-}
+};
 
-function archive_get(req, res, next) {
+const archive_get = (req, res, next) => {
   const user = getUser(req);
   if (!user.eboard) {
     res.sendStatus(403);
   } else {
-    Archive.find(function (err, subs) {
+    Archive.find((err, subs) => {
       if (err) {
         next(err);
       }
@@ -138,9 +138,9 @@ function archive_get(req, res, next) {
       });
     });
   }
-}
+};
 
-function delet(req, res, next) {
+const delet = (req, res, next) => {
   const id = req.params.id;
   Open.findById(id, (err, open) => {
     if (err) {
@@ -171,7 +171,7 @@ function delet(req, res, next) {
       });
     }
   });
-}
+};
 
 module.exports = {
   root_get: root_get,
