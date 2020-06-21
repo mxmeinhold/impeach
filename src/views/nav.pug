@@ -16,7 +16,7 @@ nav.navbar.fixed-top.navbar-expand-md.navbar-dark.bg-primary
             img(src=user.profileImage)
             = user.name
             span.caret
-          .dropdown-menu&attributes({aria-labelledby='user'})
+          .dropdown-menu&attributes({'aria-labelledby': 'user'})
             a(href='https://profiles.csh.rit.edu/').dropdown-item Profile
             a(href='https://themeswitcher.csh.rit.edu/').dropdown-item Theme
             .dropdown-divider
