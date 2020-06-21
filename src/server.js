@@ -90,6 +90,15 @@ app.get(
   }
 );
 
+app.get('/logout', (req, res) => {
+  // At the moment, this doesn't actually log you out
+  // Apparently I can't destroy sso sessions?
+  req.logout();
+  req.session.destroy((err) => {
+    res.redirect('/');
+  });
+});
+
 // Static assets
 app.use(express.static('static'));
 

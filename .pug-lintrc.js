@@ -16,12 +16,12 @@ module.exports = {
     disallowDuplicateAttributes: true,
     validateAttributeSeparator: ' ',
     // Id literals
-    disallowIdLiterals: true,
+    disallowIdLiterals: null,
     disallowIdAttributeWithStaticValue: null,
-    disallowIdLiteralsBeforeAttributes: null,
+    disallowIdLiteralsBeforeAttributes: true,
     requireIdLiteralsBeforeAttributes: null,
     disallowClassLiteralsBeforeIdLiterals: null,
-    requireClassLiteralsBeforeIdLiterals: null,
+    requireClassLiteralsBeforeIdLiterals: true,
     // Class literals
     disallowClassLiterals: null,
     disallowClassAttributeWithStaticValue: true,
