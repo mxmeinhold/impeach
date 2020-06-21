@@ -1,14 +1,10 @@
 // Set the process name for use in the stop script
 require('process').title = 'impeach';
 
-const is_prod = process.env.NODE_ENV === 'production';
-
-const eboard = require('./data/eboard.json');
-
 // Pull in environment variables
 require('dotenv').config();
 
-const db = require('./db.js');
+const is_prod = process.env.NODE_ENV === 'production';
 
 // Configure the OpenID Connect strategy for use by Passport.
 const passport = require('passport');
@@ -98,182 +94,22 @@ app.use(express.static('static'));
 // Require login
 app.use(require('connect-ensure-login').ensureLoggedIn());
 
-// Pull git revision for display
-const git = require('git-rev');
-let rev = 'GitHub';
-let gitUrl = 'https://github.com/mxmeinhold/impeach';
-git.short(function (commit) {
-  gitUrl = gitUrl + '/tree/' + commit;
-  rev = commit;
-});
-
 // Set the templating engine
 app.set('view engine', 'pug');
 app.set('views', './src/views');
 
-function getUser(req) {
-  const { preferred_username, given_name, groups } = req.user._json;
-  return {
-    eboard: groups.includes('eboard'),
-    profileImage: `https://profiles.csh.rit.edu/image/${preferred_username}`,
-    name: `${given_name} (${preferred_username})`,
-    is_prod: is_prod,
-  };
-}
+// Routes
+const routes = require('./routes.js');
 
-app.get('/', function (req, res) {
-  res.render('index', {
-    gitUrl: gitUrl,
-    gitRev: rev,
-    eboard: eboard,
-    alerts: [],
-    user: getUser(req),
-  });
-});
+app.get('/', routes.root_get);
+app.post('/', routes.root_submit);
 
-app.get('/current-evals', function (req, res, next) {
-  const user = getUser(req);
-  if (!user.eboard) {
-    res.sendStatus(403);
-  } else {
-    Open.find(function (err, subs) {
-      res.render('current-evals', {
-        gitUrl: gitUrl,
-        gitRev: rev,
-        eboard: eboard,
-        alerts: [],
-        user: getUser(req),
-        submissions: subs,
-      });
-    });
-  }
-});
+app.get('/current-evals', routes.current_evals_get);
+app.get('/archive', routes.archive_get);
 
-const body2openEval = (body) => {
-  const submission = new Open({
-    name: (body.name && body.name.trim()) || '',
-    eboard: body.eboard,
-    likes: (body.likes && body.likes.trim()) || '',
-    dislikes: (body.dislikes && body.dislikes.trim()) || '',
-    comments: (body.comments && body.comments.trim()) || '',
-  });
-  if (submission.likes || submission.dislikes || submission.comments) {
-    return submission;
-  }
-};
+app.post('/api/delet/:id', routes.delet);
 
-app.post('/', function (req, res) {
-  const submission = body2openEval(req.body);
-  if (!submission) {
-    res.render('index', {
-      gitUrl: gitUrl,
-      gitRev: rev,
-      eboard: eboard,
-      alerts: [
-        {
-          message: 'Empty submission, eval not recorded',
-          attributes: {
-            class: 'alert-warning',
-            role: 'alert',
-          },
-        },
-      ],
-      user: getUser(req),
-    });
-  } else {
-    const alerts = [];
-    submission.save((err, submission) => {
-      if (err) {
-        alerts.push({
-          message: 'Something went wrong, sorry. Eval not submitted',
-          attributes: {
-            class: 'alert-danger',
-            role: 'alert',
-          },
-        });
-      } else {
-        alerts.push({
-          message: 'Eval Submitted',
-          attributes: {
-            class: 'alert-primary',
-            role: 'alert',
-          },
-        });
-        process.env.SLACK_URI &&
-          axios
-            .post(process.env.SLACK_URI, {
-              text: submission.pretty_print(),
-              ...submission.block_format(),
-            })
-            .catch(function (error) {
-              console.log(error); // TODO
-            });
-      }
-      res.render('index', {
-        gitUrl: gitUrl,
-        gitRev: rev,
-        eboard: eboard,
-        alerts: alerts,
-        user: getUser(req),
-      });
-    });
-  }
-});
-
-app.get('/archive', function (req, res, next) {
-  const user = getUser(req);
-  if (!user.eboard) {
-    res.sendStatus(403);
-  } else {
-    Archive.find(function (err, subs) {
-      if (err) {
-        next(err);
-      }
-      res.render('archive', {
-        gitUrl: gitUrl,
-        gitRev: rev,
-        eboard: eboard,
-        alerts: [],
-        user: getUser(req),
-        submissions: subs,
-      });
-    });
-  }
-});
-
-app.post('/api/delet/:id', function (req, res, next) {
-  const id = req.params.id;
-  Open.findById(id, (err, open) => {
-    if (err) {
-      res.status(500).send('Error');
-    } else {
-      new Archive({
-        _id: open._id,
-        name: open.name,
-        likes: open.likes,
-        dislikes: open.dislikes,
-        comments: open.comments,
-        eboard: open.eboard,
-      }).save((err, archive) => {
-        if (err) {
-          res.status(500).send('Error');
-        } else {
-          Open.deleteOne({ _id: id }, (err, deleted) => {
-            if (err) {
-              Archive.deleteOne({ _id: archive._id }, (err, archive_delete) => {
-                /* At this point we don't care anymore*/
-              });
-              res.status(500).send('Error');
-            } else {
-              res.status(200).json({ deleted: true });
-            }
-          });
-        }
-      });
-    }
-  });
-});
-
+// Error handling
 if (Sentry) {
   app.use(Sentry.Handlers.errorHandler());
 }
