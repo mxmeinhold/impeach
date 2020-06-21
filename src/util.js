@@ -5,8 +5,10 @@ const git = require('git-rev');
 let rev = 'GitHub';
 let gitUrl = 'https://github.com/mxmeinhold/impeach';
 git.short((commit) => {
-  gitUrl = gitUrl + '/tree/' + commit;
-  rev = commit;
+  if (commit) {
+    gitUrl = gitUrl + '/tree/' + commit;
+    rev = commit;
+  }
 });
 
 const getUser = (req) => {
