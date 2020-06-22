@@ -2,8 +2,7 @@ const { getUser, rev, gitUrl, is_prod } = require('./util.js');
 class Err extends Error {
   constructor(message, statusCode) {
     super(message);
-    this.statusCode = statusCode;
-    this.status = `${statusCode}`.startsWith('4') ? 'fail' : 'error';
+    this.status = statusCode;
     this.isOperational = true;
     Error.captureStackTrace(this, this.constructor);
   }
@@ -14,14 +13,14 @@ const err_404 = (req, res, next) => {
 };
 
 const handle_error = (err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  res.status(statusCode);
-  const message = statusCode === 500 ? 'Something went wrong' : err.message;
+  const status = err.status || 500;
+  res.status(status);
+  const message = status === 500 ? 'Something went wrong' : err.message;
   if (is_prod) {
     res.format({
       html: () => {
         res.render('err', {
-          status: statusCode,
+          status: status,
           message: message,
           url: req.url,
           gitUrl: gitUrl,

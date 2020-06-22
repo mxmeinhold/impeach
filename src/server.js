@@ -47,10 +47,11 @@ const app = express();
 
 let Sentry;
 // Configure sentry
-if (is_prod && process.env.SENTRY_DSN) {
+if (process.env.SENTRY_DSN) {
   Sentry = require('@sentry/node');
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
+    environment: process.env.NODE_ENV || 'development',
   });
   app.use(Sentry.Handlers.requestHandler());
 }
@@ -125,7 +126,17 @@ app.use(err_404);
 
 // Error handling
 if (Sentry) {
-  app.use(Sentry.Handlers.errorHandler());
+  app.use(
+    Sentry.Handlers.errorHandler({
+      shouldHandleError(error) {
+        if (error.status === 404 || error.status >= 500) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+    })
+  );
 }
 
 app.use(handle_error);
