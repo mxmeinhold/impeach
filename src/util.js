@@ -1,15 +1,15 @@
 const is_prod = process.env.NODE_ENV === 'production';
 
 // Pull git revision for display
-const git = require('git-rev');
-let rev = 'GitHub';
-let gitUrl = 'https://github.com/mxmeinhold/impeach';
-git.short((commit) => {
-  if (commit) {
-    gitUrl = gitUrl + '/tree/' + commit;
-    rev = commit;
-  }
-});
+const shell = require('shelljs');
+let commit = '';
+if (shell.which('git')) {
+  commit = shell.exec('git rev-parse --short HEAD').stdout;
+}
+const rev = commit || 'GitHub';
+const gitUrl = `https://github.com/mxmeinhold/impeach/tree/${
+  (commit && is_prod) || 'master'
+}`;
 
 const getUser = (req) => {
   const { preferred_username, given_name, groups } = req.user._json;
