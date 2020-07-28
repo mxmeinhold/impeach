@@ -1,11 +1,11 @@
 FROM alpine:3.12
 LABEL maintainer="Max Meinhold <mxmeinhold@gmail.com>"
 
-ENV NODE_VERSION 14.3.0
+ENV NODE_VERSION 14.5.0
 
 EXPOSE 8080
 
-RUN apk add 'nodejs-current=14.3.0-r0' 'nodejs-npm=12.17.0-r0'
+RUN apk add 'nodejs-current=14.5.0-r0' 'nodejs-npm=12.17.0-r0'
 
 RUN mkdir /opt/impeach
 WORKDIR /opt/impeach
