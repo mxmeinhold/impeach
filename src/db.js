@@ -1,8 +1,9 @@
 const eboard = require('./data/eboard.json');
 const mongoose = require('mongoose');
 const { message_header, content_block } = require('./data/slack-formats.js');
+const { is_prod } = require('./util.js');
 
-const model_prefix = process.env.IS_PROD === 'production' ? '' : 'dev-';
+const model_prefix = is_prod ? '' : 'dev-';
 
 // Define and connect to database
 mongoose.connect(process.env.DB_URI);
