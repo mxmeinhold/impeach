@@ -14,7 +14,7 @@ const gitUrl = `https://github.com/mxmeinhold/impeach/tree/${
 const getUser = (req) => {
   const { preferred_username, given_name, groups } = req.user._json;
   return {
-    eboard: groups.includes('eboard'),
+    eboard: groups.some((group) => group.includes('eboard-')),
     profileImage: `https://profiles.csh.rit.edu/image/${preferred_username}`,
     name: `${given_name} (${preferred_username})`,
     is_prod: is_prod,
