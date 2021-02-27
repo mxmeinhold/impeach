@@ -9,7 +9,7 @@ This project uses yarn ([install docs](https://classic.yarnpkg.com/en/docs/insta
 ```bash
 nvm use # Set node version to the project version
 yarn # Install dependencies
-npm start # run the app (you probably need some environment variables, which I haven't documented for local dev yet)
+yarn start # run the app (you probably need some environment variables, which I haven't documented for local dev yet)
 ```
 
 For linting, this project uses gulp.

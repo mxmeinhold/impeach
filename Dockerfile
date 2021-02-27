@@ -4,6 +4,7 @@ LABEL maintainer="Max Meinhold <mxmeinhold@gmail.com>"
 EXPOSE 8080
 
 ENV NODE_ENV production
+ENV HUSKY 0
 
 RUN mkdir /opt/impeach
 WORKDIR /opt/impeach
