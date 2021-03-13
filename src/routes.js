@@ -162,10 +162,43 @@ const delet = (req, res, next) => {
   });
 };
 
+const health = (req, res, next) => {
+  const stat = db.readyState == 1 ? 200 : 512;
+
+  // Default to empty user block
+  let user = {};
+  try {
+    user = getUser(req);
+  } catch (error) {}
+
+  res.status(stat).json({
+    is_prod: is_prod,
+    git: {
+      rev: rev,
+      url: gitUrl,
+    },
+    user: user,
+    db: {
+      host: db.host,
+      port: db.port,
+      user: db.user,
+      name: db.name,
+      ready_state: {
+        0: 'disconnected',
+        1: 'connected',
+        2: 'connecting',
+        3: 'disconnecting',
+      }[db.readyState],
+      models: db.modelNames(),
+    },
+  });
+};
+
 module.exports = {
   root_get: root_get,
   current_evals_get: current_evals_get,
   root_submit: root_submit,
   archive_get: archive_get,
   delet: delet,
+  health: health,
 };

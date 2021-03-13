@@ -103,16 +103,18 @@ app.get('/logout', (req, res) => {
 // Static assets
 app.use(express.static('static'));
 
+// Routes
+const routes = require('./routes.js');
+
+// Healthcheck
+app.get('/health', routes.health);
+
 // Require login
 app.use(require('connect-ensure-login').ensureLoggedIn());
 
 // Set the templating engine
 app.set('view engine', 'pug');
 app.set('views', './src/views');
-
-// Routes
-const routes = require('./routes.js');
-const { err_404, handle_error } = require('./error.js');
 
 app.get('/', routes.root_get);
 app.post('/', routes.root_submit);
@@ -122,9 +124,10 @@ app.get('/archive', routes.archive_get);
 
 app.post('/api/delet/:id', routes.delet);
 
+// Error handling
+const { err_404, handle_error } = require('./error.js');
 app.use(err_404);
 
-// Error handling
 if (Sentry) {
   app.use(
     Sentry.Handlers.errorHandler({

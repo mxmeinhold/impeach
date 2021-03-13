@@ -4,11 +4,11 @@ const is_prod = process.env.NODE_ENV === 'production';
 const shell = require('shelljs');
 let commit = '';
 if (shell.which('git')) {
-  commit = shell.exec('git rev-parse --short HEAD').stdout;
+  commit = shell.exec('git rev-parse --short HEAD').stdout.trim();
 }
 const rev = commit || 'GitHub';
 const gitUrl = `https://github.com/mxmeinhold/impeach/tree/${
-  (commit && is_prod) || 'master'
+  commit || 'master'
 }`;
 
 const getUser = (req) => {
