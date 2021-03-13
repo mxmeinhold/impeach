@@ -10,7 +10,7 @@
         "start": "node ./src/server.js",
         "stop": "if pgrep -f 'impeach\\s*$'; then pkill -f 'impeach\\s*$'; fi",
         "watch": "while true; do npm restart & inotifywait -qre modify ./src; done",
-        "postinstall": "if [ $HUSKY != 0 ]; then husky install; fi"
+        "postinstall": "if [ \"$HUSKY\" != 0 ]; then husky install; fi"
     },
     "dependencies": {
         "@sentry/node": "^6.2.0",
