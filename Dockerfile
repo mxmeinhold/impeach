@@ -10,10 +10,11 @@ RUN mkdir /opt/impeach
 WORKDIR /opt/impeach
 
 # Yarn and nvm install deps
+# Also git for rev-parse
 RUN rm /bin/sh \
     && ln -s /bin/bash /bin/sh \
     && apt-get update \
-    && apt-get install -y curl gnupg \
+    && apt-get install -y curl gnupg git \
     && apt-get -y autoclean
 
 # Yarn install
