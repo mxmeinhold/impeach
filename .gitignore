@@ -1,3 +1,6 @@
+# Dependencies
+node_modules
+
 # Generated files
 static/
 faviconData.json

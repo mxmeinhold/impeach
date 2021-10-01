@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM docker.io/debian:buster-slim
 LABEL maintainer="Max Meinhold <mxmeinhold@gmail.com>"
 
 EXPOSE 8080
