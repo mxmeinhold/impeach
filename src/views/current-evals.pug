@@ -24,13 +24,5 @@ preview
             p.card-text= open.name
           button(type='button' onclick=`delet("${open._id}")`).btn.btn-primary Archive
 script(type='text/javascript')
-  | function delet(id) {
-  |   fetch(`/api/delet/${id}`, {
-  |     method: 'POST',
-  |     cache: 'no-cache'
-  |   })
-  |   .then(response => response.json())
-  |   .then(data => document.getElementById(id).remove())
-  |   .catch(error => console.error(error))
-  | }
+  include scripts/archive-eval.js
 include foot.pug
