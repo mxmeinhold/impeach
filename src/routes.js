@@ -107,34 +107,57 @@ const root_submit = (req, res) => {
   }
 };
 
-const archive_get = (req, res, next) => {
-  const user = getUser(req);
-  if (!user.eboard && is_prod) {
-    next(new Err('Permission denied', 403));
-  } else {
-    Archive.find((err, subs) => {
-      if (err) {
-        next(err);
-      }
-      res.render('archive', {
-        gitUrl: gitUrl,
-        gitRev: rev,
-        eboard: eboard,
-        alerts: [],
-        user: getUser(req),
-        submissions: subs,
+const publicArchiveAlerts = [
+  {
+    message: 'This archive is visible to all members. Press "Make Private" to make an eval visible to eboard only',
+    attributes: {
+      class: 'alert-info',
+      role: 'alert',
+    },
+  },
+]
+
+const privateArchiveAlerts = [
+  {
+    message: 'This archive is visible to eboard only. Press "Make Public" to make an eval visible to all members',
+    attributes: {
+      class: 'alert-info',
+      role: 'alert',
+    },
+  },
+]
+
+const archive_get = (type) => {
+  return (req, res, next) => {
+    const user = getUser(req);
+    if (!user.eboard && is_prod && type === 'private') {
+      next(new Err('Permission denied', 403));
+    } else {
+      ((type === 'private')? Archive : ArchivePublic).find((err, subs) => {
+        if (err) {
+          next(err);
+        }
+        res.render('archive', {
+          archiveType: type,
+          gitUrl: gitUrl,
+          gitRev: rev,
+          eboard: eboard,
+          alerts: (type === 'private')? privateArchiveAlerts:publicArchiveAlerts,
+          user: getUser(req),
+          submissions: subs,
+        });
       });
-    });
+    }
   }
 };
 
-const delet = (req, res, next) => {
+const publish = (req, res, next) => {
   const id = req.params.id;
   Open.findById(id, (err, open) => {
     if (err) {
       next(err);
     } else {
-      new Archive({
+      new ArchiveOpen({
         _id: open._id,
         name: open.name,
         likes: open.likes,

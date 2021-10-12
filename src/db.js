@@ -52,6 +52,7 @@ ${this.date ? this.date : ''}`;
 
   Open = mongoose.model(`${model_prefix}Open`, evalSchema);
   Archive = mongoose.model(`${model_prefix}Archive`, evalSchema);
+  ArchivePublic = mongoose.model(`${model_prefix}ArchivePublic`, evalSchema);
 });
 
 module.exports = db;

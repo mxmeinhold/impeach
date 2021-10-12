@@ -22,4 +22,12 @@ preview
           if open.name
             h5.card-subitle.mt-2 From:
             p.card-text= open.name
+          // TODO permissions
+          if archiveType == 'private'
+            button(type='button' onclick=`publish("${open._id}")`).btn.btn-primary Make Public
+          elif archiveType == 'public'
+            button(type='button' onclick=`hide("${open._id}")`).btn.btn-primary Make Private
+          button(type='button' onclick=`delet("${open._id}")`).btn.btn-primary Delete Permanently
+script(type='text/javascript')
+  include scripts/archive-eval.js
 include foot.pug

@@ -122,7 +122,7 @@ app.post('/', routes.root_submit);
 app.get('/current-evals', routes.current_evals_get);
 app.get('/archive', routes.archive_get);
 
-app.post('/api/delet/:id', routes.delet);
+app.delete('/api/delet/:id', routes.delet);
 
 // Error handling
 const { err_404, handle_error } = require('./error.js');

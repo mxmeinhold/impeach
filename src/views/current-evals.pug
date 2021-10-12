@@ -22,7 +22,9 @@ preview
           if open.name
             h5.card-subitle.mt-2 From:
             p.card-text= open.name
-          button(type='button' onclick=`delet("${open._id}")`).btn.btn-primary Archive
+          button(type='button' onclick=`publish("${open._id}")`).btn.btn-primary Archive (Public)
+          button(type='button' onclick=`hide("${open._id}")`).btn.btn-primary Archive (Private)
+          button(type='button' onclick=`delet("${open._id}")`).btn.btn-primary Delete Permanently
 script(type='text/javascript')
   include scripts/archive-eval.js
 include foot.pug
