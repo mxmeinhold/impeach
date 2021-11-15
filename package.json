@@ -6,7 +6,7 @@
         "Max Meinhold <mxmeinhold@gmail.com>"
     ],
     "scripts": {
-        "prestart": "npx gulp css",
+        "prestart": "yarn gulp css",
         "start": "node ./src/server.js",
         "stop": "if pgrep -f 'impeach\\s*$'; then pkill -f 'impeach\\s*$'; fi",
         "watch": "while true; do npm restart & inotifywait -qre modify ./src; done",

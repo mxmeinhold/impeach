@@ -4,7 +4,7 @@ const eboard = require('./data/eboard.json');
 const { Err } = require('./error.js');
 const { getUser, rev, gitUrl, is_prod } = require('./util.js');
 
-const body2openEval = (body) => {
+const body2openEval = (body, audit_name) => {
   const submission = new Open({
     name: (body.name && body.name.trim()) || '',
     eboard: body.eboard,
@@ -12,6 +12,7 @@ const body2openEval = (body) => {
     dislikes: (body.dislikes && body.dislikes.trim()) || '',
     comments: (body.comments && body.comments.trim()) || '',
     date: new Date(),
+    submitter: audit_name,
   });
   if (submission.likes || submission.dislikes || submission.comments) {
     return submission;
@@ -48,8 +49,9 @@ const current_evals_get = (req, res, next) => {
     });
   }
 };
+
 const root_submit = (req, res) => {
-  const submission = body2openEval(req.body);
+  const submission = body2openEval(req.body, getUser(req).name);
   if (!submission) {
     res.render('index', {
       gitUrl: gitUrl,
@@ -142,6 +144,7 @@ const delet = (req, res, next) => {
         comments: open.comments,
         eboard: open.eboard,
         date: open.date,
+        submitter: open.submitter,
       }).save((err, archive) => {
         if (err) {
           next(err);

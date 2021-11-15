@@ -18,6 +18,7 @@ db.once('open', () => {
     dislikes: String,
     comments: String,
     date: Date,
+    submitter: String, // For audit purposes only, not displayed on the site.
   });
   const parseEboard = (dir) => eboard[dir] || dir;
   evalSchema.methods.pretty_print = function () {
