@@ -114,7 +114,7 @@ const archive_get = (req, res, next) => {
   if (!user.eboard && is_prod) {
     next(new Err('Permission denied', 403));
   } else {
-    Archive.find((err, subs) => {
+    Archive.find().sort({'date':-1}).exec((err, subs) => {
       if (err) {
         next(err);
       }
@@ -123,7 +123,7 @@ const archive_get = (req, res, next) => {
         gitRev: rev,
         eboard: eboard,
         alerts: [],
-        user: getUser(req),
+        user: user,
         submissions: subs,
       });
     });
